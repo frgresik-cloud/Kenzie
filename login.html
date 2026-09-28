@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b141a">
+<title>NexChat — Masuk</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0b141a;--panel:#111b21;--panel-2:#182229;--input:#2a3942;
+  --text:#e9edef;--text-2:#8696a0;--text-3:#667781;
+  --accent:#00a884;--accent-hover:#06cf9c;--danger:#f15c6d;
+  --divider:rgba(233,237,239,.08);--divider-strong:rgba(233,237,239,.14);
+}
+[data-theme="light"]{
+  --bg:#efeae2;--panel:#fff;--panel-2:#f5f6f6;--input:#f0f2f5;
+  --text:#111b21;--text-2:#667781;--text-3:#8696a0;
+  --divider:rgba(17,27,33,.08);--divider-strong:rgba(17,27,33,.14);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;overflow:hidden;font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,var(--bg) 0%,var(--panel) 100%)}
+.card{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--divider);border-radius:18px;padding:32px 26px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.logo{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:26px}
+.logo-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#0088cc);display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;box-shadow:0 8px 24px rgba(0,168,132,.35)}
+.logo h1{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.logo p{font-size:13px;color:var(--text-2);margin-top:-6px}
+.tabs{display:flex;background:var(--input);border-radius:10px;padding:4px;margin-bottom:22px}
+.tabs button{flex:1;padding:10px;border-radius:7px;font-weight:600;font-size:14px;color:var(--text-2);transition:.15s;background:none;border:none;cursor:pointer;font-family:inherit}
+.tabs button.active{background:var(--panel);color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+[data-theme="light"] .tabs button.active{background:#fff}
+.field{margin-bottom:14px;position:relative}
+.field label{display:block;font-size:12.5px;color:var(--text-2);font-weight:500;margin-bottom:6px}
+.field .icon{position:absolute;left:14px;top:calc(50% + 10px);transform:translateY(-50%);color:var(--text-3);font-size:15px;pointer-events:none}
+.field input{width:100%;background:var(--input);border:1.5px solid transparent;border-radius:10px;padding:13px 14px 13px 42px;font-size:15px;color:var(--text);outline:none;transition:.15s;font-family:inherit}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--text-3)}
+.field .toggle-pw{position:absolute;right:14px;top:calc(50% + 10px);transform:translateY(-50%);color:var(--text-3);cursor:pointer;font-size:15px;padding:4px}
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;transition:.15s;margin-top:8px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+.err{background:rgba(241,92,109,.15);color:#ff8a8a;padding:11px 14px;border-radius:8px;font-size:13.5px;margin-bottom:14px;border:1px solid rgba(241,92,109,.3);display:none;line-height:1.5}
+.err.show{display:block}
+.err i{margin-right:7px}
+.hint{text-align:center;font-size:12.5px;color:var(--text-2);margin-top:18px;line-height:1.6}
+.hint a{color:var(--accent);text-decoration:none;font-weight:500}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.theme-toggle{position:fixed;top:16px;right:16px;width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--divider);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
+<div class="wrap">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon"><i class="fa-solid fa-comments"></i></div>
+      <h1>NexChat</h1>
+      <p>Obrolan realtime, aman, dan cepat</p>
+    </div>
+
+    <div class="tabs">
+      <button id="tab-login" class="active" onclick="switchMode('login')">Masuk</button>
+      <button id="tab-register" onclick="switchMode('register')">Daftar</button>
+    </div>
+
+    <div id="err" class="err"><i class="fa-solid fa-circle-exclamation"></i><span id="err-text"></span></div>
+
+    <div class="field">
+      <label>Username</label>
+      <i class="fa-solid fa-at icon"></i>
+      <input id="username" placeholder="username" autocapitalize="none" autocomplete="username" maxlength="20">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <i class="fa-solid fa-lock icon"></i>
+      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+      <i class="fa-solid fa-eye toggle-pw" onclick="togglePw('password', this)"></i>
+    </div>
+
+    <div id="confirm-field" class="field" style="display:none">
+      <label>Konfirmasi Password</label>
+      <i class="fa-solid fa-lock icon"></i>
+      <input id="password2" type="password" placeholder="••••••••" autocomplete="new-password">
+      <i class="fa-solid fa-eye toggle-pw" onclick="togglePw('password2', this)"></i>
+    </div>
+
+    <button class="btn-primary" id="submit-btn" onclick="submitForm()">
+      <span id="submit-label">Masuk</span>
+    </button>
+
+    <div class="hint" id="hint">
+      Belum punya akun? <a href="#" onclick="event.preventDefault();switchMode('register')">Daftar sekarang</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const SESSION_KEY = 'nexchat_session';
+let mode = 'login';
+
+function applyTheme() {
+  const t = localStorage.getItem('nexchat_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  const ic = document.getElementById('theme-icon');
+  if (ic) ic.className = 'fa-solid ' + (t === 'dark' ? 'fa-moon' : 'fa-sun');
+}
+function toggleTheme() {
+  const cur = localStorage.getItem('nexchat_theme') || 'dark';
+  localStorage.setItem('nexchat_theme', cur === 'dark' ? 'light' : 'dark');
+  applyTheme();
+}
+applyTheme();
+
+function switchMode(m) {
+  mode = m;
+  document.getElementById('tab-login').classList.toggle('active', m === 'login');
+  document.getElementById('tab-register').classList.toggle('active', m === 'register');
+  document.getElementById('confirm-field').style.display = m === 'register' ? 'block' : 'none';
+  document.getElementById('submit-label').textContent = m === 'login' ? 'Masuk' : 'Daftar';
+  document.getElementById('hint').innerHTML = m === 'login'
+    ? 'Belum punya akun? <a href="#" onclick="event.preventDefault();switchMode(\'register\')">Daftar sekarang</a>'
+    : 'Sudah punya akun? <a href="#" onclick="event.preventDefault();switchMode(\'login\')">Masuk</a>';
+  hideErr();
+  const pw = document.getElementById('password');
+  pw.setAttribute('autocomplete', m === 'login' ? 'current-password' : 'new-password');
+}
+
+function togglePw(id, el) {
+  const inp = document.getElementById(id);
+  if (inp.type === 'password') { inp.type = 'text'; el.className = 'fa-solid fa-eye-slash toggle-pw'; }
+  else { inp.type = 'password'; el.className = 'fa-solid fa-eye toggle-pw'; }
+}
+
+function showErr(msg) {
+  document.getElementById('err-text').textContent = msg;
+  document.getElementById('err').classList.add('show');
+}
+function hideErr() { document.getElementById('err').classList.remove('show'); }
+
+async function submitForm() {
+  hideErr();
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value;
+  const p2 = document.getElementById('password2').value;
+
+  if (!u || !p) return showErr('Username dan password wajib diisi!');
+  if (!/^[a-z0-9_.-]{3,20}$/.test(u)) return showErr('Username 3-20 karakter (huruf kecil, angka, . _ -)');
+  if (mode === 'register') {
+    if (!p2) return showErr('Konfirmasi password wajib diisi!');
+    if (p !== p2) return showErr('Konfirmasi password tidak cocok!');
+    if (p.length < 3) return showErr('Password minimal 3 karakter!');
+  }
+
+  const btn = document.getElementById('submit-btn');
+  const label = document.getElementById('submit-label');
+  btn.disabled = true;
+  label.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const url = mode === 'login' ? '/api/login' : '/api/register';
+    const r = await fetch(url, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    }).then(x => x.json());
+
+    if (!r.success) {
+      btn.disabled = false;
+      label.textContent = mode === 'login' ? 'Masuk' : 'Daftar';
+      return showErr(r.msg || 'Gagal');
+    }
+
+    if (mode === 'register') {
+      const lr = await fetch('/api/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      }).then(x => x.json());
+      if (!lr.success) {
+        btn.disabled = false;
+        label.textContent = 'Daftar';
+        return showErr('Pendaftaran sukses, silakan login manual.');
+      }
+      saveSession(lr.user.username);
+      location.href = '/';
+    } else {
+      saveSession(r.user.username);
+      location.href = '/';
+    }
+  } catch (e) {
+    btn.disabled = false;
+    label.textContent = mode === 'login' ? 'Masuk' : 'Daftar';
+    showErr('Gagal terhubung ke server.');
+  }
+}
+function saveSession(username) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ username, ts: Date.now() }));
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') submitForm(); });
+
+(function checkSession(){
+  try {
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (s && s.username) {
+      fetch('/api/me/' + encodeURIComponent(s.username)).then(r => r.json()).then(d => {
+        if (d.exists) location.href = '/';
+      }).catch(()=>{});
+    }
+  } catch {}
+})();
+</script>
+</body>
+</html>
